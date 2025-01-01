@@ -1,0 +1,141 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <stack>
+using namespace std;
+
+vector<string> vertices = {"Ha Noi", "Hai Duong", "Hung Yen", "Phu Ly", "Hoa Binh", "Son Tay", "Thai Nguyen", "Bac Ninh", "Bac Giang", "Uong Bi", "Hai Phong"};
+
+// Cách 1: Sử dụng ma trận lân cận 
+vector<vector<int>> adjacencyMatrix(vertices.size(), vector<int>(vertices.size(), 0));
+
+void addEdgeMatrix(int u, int v) {
+    adjacencyMatrix[u][v] = 1;
+    adjacencyMatrix[v][u] = 1;
+}
+
+void BFS_Matrix(int start) {
+    vector<bool> visited(vertices.size(), false);
+    queue<int> q;
+    q.push(start);
+    visited[start] = true;
+
+    cout << "BFS Traversal (Matrix): ";
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();
+        cout << vertices[node] << " ";
+
+        for (int i = 0; i < vertices.size(); i++) {
+            if (adjacencyMatrix[node][i] && !visited[i]) {
+                visited[i] = true;
+                q.push(i);
+            }
+        }
+    }
+    cout << endl;
+}
+
+void DFS_Matrix(int start) {
+    vector<bool> visited(vertices.size(), false);
+    stack<int> s;
+    s.push(start);
+
+    cout << "DFS Traversal (Matrix): ";
+    while (!s.empty()) {
+        int node = s.top();
+        s.pop();
+
+        if (!visited[node]) {
+            visited[node] = true;
+            cout << vertices[node] << " ";
+        }
+
+        for (int i = vertices.size() - 1; i >= 0; i--) {
+            if (adjacencyMatrix[node][i] && !visited[i]) {
+                s.push(i);
+            }
+        }
+    }
+    cout << endl;
+}
+
+// Cách 2: Sử dụng danh sách lân cận 
+vector<vector<int>> adjacencyList(vertices.size());
+
+void addEdgeList(int u, int v) {
+    adjacencyList[u].push_back(v);
+    adjacencyList[v].push_back(u);
+}
+
+void BFS_List(int start) {
+    vector<bool> visited(vertices.size(), false);
+    queue<int> q;
+    q.push(start);
+    visited[start] = true;
+
+    cout << "BFS Traversal (List): ";
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();
+        cout << vertices[node] << " ";
+
+        for (int neighbor : adjacencyList[node]) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                q.push(neighbor);
+            }
+        }
+    }
+    cout << endl;
+}
+
+void DFS_List(int start) {
+    vector<bool> visited(vertices.size(), false);
+    stack<int> s;
+    s.push(start);
+
+    cout << "DFS Traversal (List): ";
+    while (!s.empty()) {
+        int node = s.top();
+        s.pop();
+
+        if (!visited[node]) {
+            visited[node] = true;
+            cout << vertices[node] << " ";
+        }
+
+        for (int neighbor : adjacencyList[node]) {
+            if (!visited[neighbor]) {
+                s.push(neighbor);
+            }
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    // Thêm các cạnh dựa trên đồ thị vào cả hai cấu trúc
+    addEdgeMatrix(0, 1); addEdgeList(0, 1); // D1: Ha Noi - Hai Duong
+    addEdgeMatrix(1, 2); addEdgeList(1, 2); // D2: Hai Duong - Hung Yen
+    addEdgeMatrix(2, 3); addEdgeList(2, 3); // D3: Hung Yen - Phu Ly
+    addEdgeMatrix(3, 0); addEdgeList(3, 0); // D4: Phu Ly - Ha Noi
+    addEdgeMatrix(0, 4); addEdgeList(0, 4); // D5: Ha Noi - Hoa Binh
+    addEdgeMatrix(0, 5); addEdgeList(0, 5); // D6: Ha Noi - Son Tay
+    addEdgeMatrix(5, 6); addEdgeList(5, 6); // D7: Son Tay - Thai Nguyen
+    addEdgeMatrix(0, 7); addEdgeList(0, 7); // D8: Ha Noi - Bac Ninh
+    addEdgeMatrix(7, 8); addEdgeList(7, 8); // D9: Bac Ninh - Bac Giang
+    addEdgeMatrix(8, 9); addEdgeList(8, 9); // D10: Bac Giang - Uong Bi
+    addEdgeMatrix(7, 9); addEdgeList(7, 9); // D11: Bac Ninh - Uong Bi
+    addEdgeMatrix(9, 10); addEdgeList(9, 10); // D12: Uong Bi - Hai Phong
+    addEdgeMatrix(10, 1); addEdgeList(10, 1); // D13: Hai Phong - Hai Duong
+
+    // Duyệt đồ thị bằng cả hai cách
+    int startVertex = 0; // Bắt đầu từ "Ha Noi"
+    BFS_Matrix(startVertex);
+    DFS_Matrix(startVertex);
+    BFS_List(startVertex);
+    DFS_List(startVertex);
+
+    return 0;
+}
